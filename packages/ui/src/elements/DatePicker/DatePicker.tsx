@@ -1,7 +1,7 @@
 'use client'
 import type { DatePickerProps } from 'react-datepicker'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import ReactDatePickerDefaultImport, { registerLocale, setDefaultLocale } from 'react-datepicker'
 const ReactDatePicker = (ReactDatePickerDefaultImport.default ||
   ReactDatePickerDefaultImport) as unknown as typeof ReactDatePickerDefaultImport.default
@@ -120,6 +120,22 @@ const DatePicker: React.FC<Props> = (props) => {
     }
   }, [i18n.language, i18n.dateFNS])
 
+  const PopperContainer: DatePickerProps['popperContainer'] = useMemo(() => {
+    return ({ children }: { children: React.ReactNode }) => {
+      const Container = dateTimePickerProps.popperContainer
+
+      if (Container) {
+        return (
+          <div className={classes}>
+            <Container>{children}</Container>
+          </div>
+        )
+      }
+
+      return <div className={classes}>{children}</div>
+    }
+  }, [classes, dateTimePickerProps.popperContainer])
+
   return (
     <div className={classes} id={id}>
       <div className={`${baseClass}__icon-wrap`}>
@@ -136,8 +152,10 @@ const DatePicker: React.FC<Props> = (props) => {
       </div>
       <div className={`${baseClass}__input-wrapper`}>
         <ReactDatePicker
+          portalId={`${baseClass}-portal`}
           {...dateTimePickerProps}
           dropdownMode="select"
+          popperContainer={PopperContainer} // Ensures the styles are applied to the popper in the portal
           showMonthDropdown
           showYearDropdown
         />
