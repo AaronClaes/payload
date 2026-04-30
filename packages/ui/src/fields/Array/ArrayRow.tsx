@@ -21,7 +21,7 @@ import { RenderFields } from '../../forms/RenderFields/index.js'
 import { RowLabel } from '../../forms/RowLabel/index.js'
 import { useThrottledValue } from '../../hooks/useThrottledValue.js'
 import { useTranslation } from '../../providers/Translation/index.js'
-import './index.scss'
+import './index.css'
 
 const baseClass = 'array-field'
 
@@ -47,6 +47,7 @@ type ArrayRowProps = {
   readonly rowCount: number
   readonly rowIndex: number
   readonly schemaPath: string
+  readonly scrollIdPrefix: string
   readonly setCollapse: (rowID: string, collapsed: boolean) => void
 } & Pick<ClientComponentProps, 'forceRender'> &
   UseDraggableSortableReturn
@@ -77,6 +78,7 @@ export const ArrayRow: React.FC<ArrayRowProps> = ({
   rowCount,
   rowIndex,
   schemaPath,
+  scrollIdPrefix,
   setCollapse,
   setNodeRef,
   transform,
@@ -141,7 +143,7 @@ export const ArrayRow: React.FC<ArrayRowProps> = ({
             : undefined
         }
         header={
-          <div className={`${baseClass}__row-header`}>
+          <div className={`${baseClass}__row-header`} id={`${scrollIdPrefix}-row-${rowIndex}`}>
             {isLoading ? (
               <ShimmerEffect height="1rem" width="8rem" />
             ) : (

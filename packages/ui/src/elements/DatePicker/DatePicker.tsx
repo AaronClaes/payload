@@ -13,7 +13,6 @@ import type { Props } from './types.js'
 import { CalendarIcon } from '../../icons/Calendar/index.js'
 import { XIcon } from '../../icons/X/index.js'
 import { useTranslation } from '../../providers/Translation/index.js'
-import './library.scss'
 import './index.scss'
 import { getFormattedLocale } from './getFormattedLocale.js'
 
@@ -117,6 +116,7 @@ const DatePicker: React.FC<Props> = (props) => {
         registerLocale(datepickerLocale, i18n.dateFNS)
         setDefaultLocale(datepickerLocale)
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.warn(`Could not find DatePicker locale for ${i18n.language}`)
       }
     }

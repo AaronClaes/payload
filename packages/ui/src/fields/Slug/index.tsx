@@ -12,18 +12,14 @@ import { useServerFunctions } from '../../providers/ServerFunctions/index.js'
 import { useTranslation } from '../../providers/Translation/index.js'
 import { FieldLabel } from '../FieldLabel/index.js'
 import { TextInput } from '../Text/index.js'
-import './index.scss'
+import './index.css'
 
 /**
  * @experimental This component is experimental and may change or be removed in the future. Use at your own risk.
  */
-export const SlugField: React.FC<SlugFieldClientProps> = ({
-  field,
-  path,
-  readOnly: readOnlyFromProps,
-  useAsSlug,
-}) => {
-  const { label } = field
+export const SlugField: React.FC<SlugFieldClientProps> = ({ field, path, useAsSlug }) => {
+  const { admin, label } = field
+  const { readOnly: readOnlyFromProps } = admin || {}
 
   const { t } = useTranslation()
 
@@ -79,14 +75,16 @@ export const SlugField: React.FC<SlugFieldClientProps> = ({
     <div className="field-type slug-field-component">
       <div className="label-wrapper">
         <FieldLabel htmlFor={`field-${path}`} label={label} />
-        {!isLocked && (
+        {!readOnlyFromProps && !isLocked && (
           <Button buttonStyle="none" className="lock-button" onClick={handleGenerate}>
             {t('authentication:generate')}
           </Button>
         )}
-        <Button buttonStyle="none" className="lock-button" onClick={toggleLock}>
-          {isLocked ? t('general:unlock') : t('general:lock')}
-        </Button>
+        {!readOnlyFromProps && (
+          <Button buttonStyle="none" className="lock-button" onClick={toggleLock}>
+            {isLocked ? t('general:unlock') : t('general:lock')}
+          </Button>
+        )}
       </div>
       <TextInput
         onChange={setValue}

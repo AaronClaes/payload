@@ -7,7 +7,7 @@ import React from 'react'
 
 import type { ReloadDoc } from '../types.js'
 
-import './index.scss'
+import './index.css'
 import { RelationshipContent } from '../RelationshipContent/index.js'
 import { UploadCard } from '../UploadCard/index.js'
 
@@ -86,6 +86,7 @@ export function UploadComponentHasOne(props: Props) {
         showCollectionSlug={showCollectionSlug}
         src={src}
         thumbnailSrc={thumbnailSrc}
+        updatedAt={value.updatedAt}
         x={value?.width as number}
         y={value?.height as number}
       />

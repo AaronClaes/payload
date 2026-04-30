@@ -43,7 +43,7 @@
 
     &__headerTopRow {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
       gap: var(--base);
       width: 100%;
@@ -54,6 +54,7 @@
     &__header__text {
       display: flex;
       flex-direction: column;
+      gap: calc(var(--base) / 4);
 
       .error-pill {
         align-self: flex-start;
@@ -82,7 +83,6 @@
     }
 
     &__fileRow {
-      @include btn-reset;
       display: flex;
       padding: var(--rowPadding);
       align-items: center;
@@ -168,7 +168,6 @@
     }
 
     &__remove {
-      @include btn-reset;
       margin: 0;
       margin-left: auto;
 

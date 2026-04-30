@@ -1,16 +1,16 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, CollectionSlug } from 'payload'
 
-import type { PluginMCPServerConfig } from '../types.js'
+import type { MCPPluginConfig } from '../types.js'
 
 import { toCamelCase } from '../utils/camelCase.js'
 import { createApiKeyFields } from '../utils/createApiKeyFields.js'
 
 export const createAPIKeysCollection = (
-  collections: PluginMCPServerConfig['collections'],
-  globals: PluginMCPServerConfig['globals'],
+  collections: MCPPluginConfig['collections'],
+  globals: MCPPluginConfig['globals'],
   customTools: Array<{ description: string; name: string }> = [],
-  experimentalTools: NonNullable<PluginMCPServerConfig['experimental']>['tools'] = {},
-  pluginOptions: PluginMCPServerConfig,
+  experimentalTools: NonNullable<MCPPluginConfig['experimental']>['tools'] = {},
+  pluginOptions: MCPPluginConfig,
 ): CollectionConfig => {
   const customToolsFields = customTools.map((tool) => {
     const camelCasedName = toCamelCase(tool.name)
@@ -54,10 +54,6 @@ export const createAPIKeysCollection = (
     }) || []
 
   const userCollection = pluginOptions.userCollection
-    ? typeof pluginOptions.userCollection === 'string'
-      ? pluginOptions.userCollection
-      : pluginOptions.userCollection.slug
-    : 'users'
 
   return {
     slug: 'payload-mcp-api-keys',
@@ -78,7 +74,7 @@ export const createAPIKeysCollection = (
         admin: {
           description: 'The user that the API key is associated with.',
         },
-        relationTo: userCollection,
+        relationTo: userCollection as CollectionSlug,
         required: true,
       },
       {

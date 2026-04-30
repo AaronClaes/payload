@@ -6,7 +6,7 @@ import type {
 } from 'payload'
 
 import { getTranslation } from '@payloadcms/translations'
-import React, { Fragment, useCallback, useMemo } from 'react'
+import React, { Fragment, useCallback, useId, useMemo } from 'react'
 import { toast } from 'sonner'
 
 import type { ClipboardPasteData } from '../../elements/ClipboardAction/types.js'
@@ -31,6 +31,7 @@ import { extractRowsAndCollapsedIDs, toggleAllRows } from '../../forms/Form/rowH
 import { NullifyLocaleField } from '../../forms/NullifyField/index.js'
 import { useField } from '../../forms/useField/index.js'
 import { withCondition } from '../../forms/withCondition/index.js'
+import { CirclePlusIcon } from '../../icons/CirclePlus/index.js'
 import { useConfig } from '../../providers/Config/index.js'
 import { useDocumentInfo } from '../../providers/DocumentInfo/index.js'
 import { useLocale } from '../../providers/Locale/index.js'
@@ -39,7 +40,7 @@ import { scrollToID } from '../../utilities/scrollToID.js'
 import { mergeFieldStyles } from '../mergeFieldStyles.js'
 import { fieldBaseClass } from '../shared/index.js'
 import { ArrayRow } from './ArrayRow.js'
-import './index.scss'
+import './index.css'
 
 const baseClass = 'array-field'
 
@@ -144,6 +145,9 @@ export const ArrayFieldComponent: ArrayFieldClientComponent = (props) => {
     validate: memoizedValidate,
   })
 
+  const componentId = useId()
+  const scrollIdPrefix = useMemo(() => `scroll-${componentId}`, [componentId])
+
   const addRow = useCallback(
     (rowIndex: number) => {
       addFieldRow({
@@ -153,10 +157,10 @@ export const ArrayFieldComponent: ArrayFieldClientComponent = (props) => {
       })
 
       setTimeout(() => {
-        scrollToID(`${path}-row-${rowIndex}`)
+        scrollToID(`${scrollIdPrefix}-row-${rowIndex}`)
       }, 0)
     },
-    [addFieldRow, path, schemaPath],
+    [addFieldRow, path, schemaPath, scrollIdPrefix],
   )
 
   const duplicateRow = useCallback(
@@ -166,10 +170,10 @@ export const ArrayFieldComponent: ArrayFieldClientComponent = (props) => {
       setModified(true)
 
       setTimeout(() => {
-        scrollToID(`${path}-row-${rowIndex}`)
+        scrollToID(`${scrollIdPrefix}-row-${rowIndex}`)
       }, 0)
     },
-    [dispatchFields, path, setModified],
+    [dispatchFields, path, scrollIdPrefix, setModified],
   )
 
   const removeRow = useCallback(
@@ -439,6 +443,7 @@ export const ArrayFieldComponent: ArrayFieldClientComponent = (props) => {
                     rowCount={rows?.length}
                     rowIndex={i}
                     schemaPath={schemaPath}
+                    scrollIdPrefix={scrollIdPrefix}
                     setCollapse={setCollapse}
                   />
                 )}
@@ -471,9 +476,8 @@ export const ArrayFieldComponent: ArrayFieldClientComponent = (props) => {
           buttonStyle="icon-label"
           className={`${baseClass}__add-row`}
           disabled={disabled}
-          icon="plus"
+          icon={<CirclePlusIcon />}
           iconPosition="left"
-          iconStyle="with-border"
           onClick={() => {
             void addRow(value || 0)
           }}

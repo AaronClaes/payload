@@ -74,8 +74,10 @@ export interface Config {
     'hidden-collection': HiddenCollection;
     'not-in-view-collection': NotInViewCollection;
     'collection-no-api-view': CollectionNoApiView;
+    'custom-document-controls': CustomDocumentControl;
     'custom-views-one': CustomViewsOne;
     'custom-views-two': CustomViewsTwo;
+    'custom-collection-view': CustomCollectionView;
     'reorder-tabs': ReorderTab;
     'custom-fields': CustomField;
     'group-one-collection-ones': GroupOneCollectionOne;
@@ -113,8 +115,10 @@ export interface Config {
     'hidden-collection': HiddenCollectionSelect<false> | HiddenCollectionSelect<true>;
     'not-in-view-collection': NotInViewCollectionSelect<false> | NotInViewCollectionSelect<true>;
     'collection-no-api-view': CollectionNoApiViewSelect<false> | CollectionNoApiViewSelect<true>;
+    'custom-document-controls': CustomDocumentControlsSelect<false> | CustomDocumentControlsSelect<true>;
     'custom-views-one': CustomViewsOneSelect<false> | CustomViewsOneSelect<true>;
     'custom-views-two': CustomViewsTwoSelect<false> | CustomViewsTwoSelect<true>;
+    'custom-collection-view': CustomCollectionViewSelect<false> | CustomCollectionViewSelect<true>;
     'reorder-tabs': ReorderTabsSelect<false> | ReorderTabsSelect<true>;
     'custom-fields': CustomFieldsSelect<false> | CustomFieldsSelect<true>;
     'group-one-collection-ones': GroupOneCollectionOnesSelect<false> | GroupOneCollectionOnesSelect<true>;
@@ -152,6 +156,7 @@ export interface Config {
     'not-in-view-global': NotInViewGlobal;
     'global-no-api-view': GlobalNoApiView;
     global: Global;
+    'custom-global-document-controls': CustomGlobalDocumentControl;
     'custom-global-views-one': CustomGlobalViewsOne;
     'custom-global-views-two': CustomGlobalViewsTwo;
     'group-globals-one': GroupGlobalsOne;
@@ -163,6 +168,7 @@ export interface Config {
     'not-in-view-global': NotInViewGlobalSelect<false> | NotInViewGlobalSelect<true>;
     'global-no-api-view': GlobalNoApiViewSelect<false> | GlobalNoApiViewSelect<true>;
     global: GlobalSelect<false> | GlobalSelect<true>;
+    'custom-global-document-controls': CustomGlobalDocumentControlsSelect<false> | CustomGlobalDocumentControlsSelect<true>;
     'custom-global-views-one': CustomGlobalViewsOneSelect<false> | CustomGlobalViewsOneSelect<true>;
     'custom-global-views-two': CustomGlobalViewsTwoSelect<false> | CustomGlobalViewsTwoSelect<true>;
     'group-globals-one': GroupGlobalsOneSelect<false> | GroupGlobalsOneSelect<true>;
@@ -170,9 +176,10 @@ export interface Config {
     settings: SettingsSelect<false> | SettingsSelect<true>;
   };
   locale: 'es' | 'en';
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
@@ -255,11 +262,21 @@ export interface Post {
   title?: string | null;
   description?: string | null;
   number?: number | null;
-  richText?:
-    | {
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
         [k: string]: unknown;
-      }[]
-    | null;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   someTextField?: string | null;
   namedGroup?: {
     someTextField?: string | null;
@@ -321,6 +338,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -353,6 +371,17 @@ export interface CollectionNoApiView {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-document-controls".
+ */
+export interface CustomDocumentControl {
+  id: string;
+  title?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "custom-views-one".
  */
 export interface CustomViewsOne {
@@ -366,6 +395,16 @@ export interface CustomViewsOne {
  * via the `definition` "custom-views-two".
  */
 export interface CustomViewsTwo {
+  id: string;
+  title?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-collection-view".
+ */
+export interface CustomCollectionView {
   id: string;
   title?: string | null;
   updatedAt: string;
@@ -629,6 +668,7 @@ export interface ListViewSelectApi {
 export interface Virtual {
   id: string;
   virtualTitleFromPost?: string | null;
+  textField?: string | null;
   virtualText?: string | null;
   post?: (string | null) | Post;
   updatedAt: string;
@@ -706,12 +746,20 @@ export interface PayloadLockedDocument {
         value: string | CollectionNoApiView;
       } | null)
     | ({
+        relationTo: 'custom-document-controls';
+        value: string | CustomDocumentControl;
+      } | null)
+    | ({
         relationTo: 'custom-views-one';
         value: string | CustomViewsOne;
       } | null)
     | ({
         relationTo: 'custom-views-two';
         value: string | CustomViewsTwo;
+      } | null)
+    | ({
+        relationTo: 'custom-collection-view';
+        value: string | CustomCollectionView;
       } | null)
     | ({
         relationTo: 'reorder-tabs';
@@ -999,6 +1047,16 @@ export interface CollectionNoApiViewSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-document-controls_select".
+ */
+export interface CustomDocumentControlsSelect<T extends boolean = true> {
+  title?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "custom-views-one_select".
  */
 export interface CustomViewsOneSelect<T extends boolean = true> {
@@ -1011,6 +1069,15 @@ export interface CustomViewsOneSelect<T extends boolean = true> {
  * via the `definition` "custom-views-two_select".
  */
 export interface CustomViewsTwoSelect<T extends boolean = true> {
+  title?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-collection-view_select".
+ */
+export interface CustomCollectionViewSelect<T extends boolean = true> {
   title?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1252,6 +1319,7 @@ export interface ListViewSelectApiSelect<T extends boolean = true> {
  */
 export interface VirtualsSelect<T extends boolean = true> {
   virtualTitleFromPost?: T;
+  textField?: T;
   virtualText?: T;
   post?: T;
   updatedAt?: T;
@@ -1357,6 +1425,17 @@ export interface Global {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-global-document-controls".
+ */
+export interface CustomGlobalDocumentControl {
+  id: string;
+  title?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "custom-global-views-one".
  */
 export interface CustomGlobalViewsOne {
@@ -1448,6 +1527,17 @@ export interface GlobalSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-global-document-controls_select".
+ */
+export interface CustomGlobalDocumentControlsSelect<T extends boolean = true> {
+  title?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "custom-global-views-one_select".
  */
 export interface CustomGlobalViewsOneSelect<T extends boolean = true> {
@@ -1495,6 +1585,16 @@ export interface SettingsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

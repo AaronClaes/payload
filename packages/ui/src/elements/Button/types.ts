@@ -10,7 +10,9 @@ export type Props = {
   'aria-label'?: string
   buttonId?: string
   buttonStyle?:
-    | 'error'
+    | 'dashed'
+    | 'destructive'
+    | 'ghost'
     | 'icon-label'
     | 'none'
     | 'pill'
@@ -18,7 +20,6 @@ export type Props = {
     | 'secondary'
     | 'subtle'
     | 'tab'
-    | 'transparent'
   children?: React.ReactNode
   className?: string
   disabled?: boolean
@@ -53,7 +54,7 @@ export type Props = {
   ref?: React.RefObject<HTMLAnchorElement | HTMLButtonElement | null>
   round?: boolean
   secondaryActions?: secondaryAction | secondaryAction[]
-  size?: 'large' | 'medium' | 'small' | 'xsmall'
+  size?: 'large' | 'medium'
   SubMenuPopupContent?: (props: { close: () => void }) => React.ReactNode
   to?: string
   tooltip?: string
